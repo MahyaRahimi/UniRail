@@ -1,0 +1,14 @@
+INPUT(
+./release\bitratebox.o
+./release\connectdialog.o
+./release\main.o
+./release\mainwindow.o
+./release\sendframebox.o
+./release\logger.o
+./release\dataexplore.o
+./release\qrc_can.o
+./release\moc_connectdialog.o
+./release\moc_mainwindow.o
+./release\moc_sendframebox.o
+./release\moc_logger.o
+);

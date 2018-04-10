@@ -1,0 +1,14 @@
+INPUT(
+./debug\bitratebox.o
+./debug\connectdialog.o
+./debug\main.o
+./debug\mainwindow.o
+./debug\sendframebox.o
+./debug\logger.o
+./debug\dataexplore.o
+./debug\qrc_can.o
+./debug\moc_connectdialog.o
+./debug\moc_mainwindow.o
+./debug\moc_sendframebox.o
+./debug\moc_logger.o
+);
