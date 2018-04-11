@@ -47,6 +47,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include"dataexplore.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "connectdialog.h"
@@ -138,6 +139,9 @@ void MainWindow::connectDevice()
 
     connect(m_canDevice, &QCanBusDevice::errorOccurred, this, &MainWindow::processErrors);
     connect(m_canDevice, &QCanBusDevice::framesReceived, this, &MainWindow::processReceivedFrames);
+    //dobject=new DataExplore(this);
+ //   DataExplore dobject;
+  //  connect(m_canDevice, &QCanBusDevice::framesReceived, &dobject, &DataExplore::explore);
     connect(m_canDevice, &QCanBusDevice::framesWritten, this, &MainWindow::processFramesWritten);
 
     if (p.useConfigurationEnabled) {
@@ -197,20 +201,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->accept();
 }
 
-static QString frameFlags(const QCanBusFrame &frame)
-{
-    QString result = QLatin1String(" --- ");
-
-    if (frame.hasBitrateSwitch())
-        result[1] = QLatin1Char('B');
-    if (frame.hasErrorStateIndicator())
-        result[2] = QLatin1Char('E');
-    if (frame.hasLocalEcho())
-        result[3] = QLatin1Char('L');
-
-    return result;
-}
-
 void MainWindow::processReceivedFrames()
 {
     if (!m_canDevice)
@@ -219,50 +209,16 @@ void MainWindow::processReceivedFrames()
     while (m_canDevice->framesAvailable()) {
         const QCanBusFrame frame = m_canDevice->readFrame();
 
-        QString view;
-        if (frame.frameType() == QCanBusFrame::ErrorFrame)
-            view = m_canDevice->interpretErrorFrame(frame);
-        else{
+        //QString view;
+
            // view = frame.toString();
-            idtoexplore=frame.frameId();
-            datatoexplore=frame.payload();
+        /*call explore to create log file.*/
+        explore(frame);
+        /*write in user interface:*/
+        if(explore(frame)!=-1){
+            m_ui->receivedMessagesEdit->append(explore(frame));
         }
-
-         QString time = QString::fromLatin1("%1.%2  ")
-                .arg(frame.timeStamp().seconds(), 10, 10, QLatin1Char(' '))
-                .arg(frame.timeStamp().microSeconds() / 100, 4, 10, QLatin1Char('0'));
-
-         QString flags = frameFlags(frame);
-
-         /*define the file "CanLog.txt" to log the data frames into:*/
-         QPlainTextEdit *editor = new QPlainTextEdit();
-         QString fileName = "c:CanLog.txt";
-         Logger *logger = new Logger(fileName, editor);
-
-         /*if the frame data equals to a Crash Fault (0FC):*/
-         if (idtoexplore==0xFC)
-         {
-             /*write in user interface:*/
-             m_ui->receivedMessagesEdit->append(time + flags + "     0FC   Crash Fault");
-             /*write in log file "CanLog.txt":*/
-             text=time.append(flags).append("     0FC   Crash Fault\n");
-             logger->write(text);
-
-         /*if the frame data equals to a Default Fault (0FD):*/
-         }else if (idtoexplore==0xFD)
-         {
-             /*write in user interface:*/
-             m_ui->receivedMessagesEdit->append(time + flags + "     0FD   Default Fault");
-             /*write in log file "CanLog.txt":*/
-             text=time.append(flags).append("     0FD   Default Fault\n");
-             logger->write(text);
-         /*if the frame data is not an error frame:*/
-         }else
-         {
-             /*Doesn't show other frames:*/
-             break;
-         }
-    }
+      }
 }
 
 void MainWindow::sendFrame(const QCanBusFrame &frame) const

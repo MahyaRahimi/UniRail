@@ -54,6 +54,8 @@
 #include <QCanBusDevice> // for CanBusError
 
 #include <QMainWindow>
+#include "dataexplore.h"
+
 
 class ConnectDialog;
 
@@ -68,15 +70,13 @@ class MainWindow;
 
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public DataExplore
 {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-     QString text;
-     QByteArray datatoexplore;
-     quint32 idtoexplore;
+
     ~MainWindow();
 
 private slots:
